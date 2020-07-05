@@ -13,6 +13,7 @@
     <script src="./libs/jquery-1.12.4.min.js"></script>
     <!-- 导入bootstrap的js文件 -->
     <script src="./libs/bootstrap/js/bootstrap.min.js"></script>
+    <script src="./libs/http.js"></script>
 </head>
 
 <body>
@@ -60,21 +61,29 @@
             // 进入首页就应该获取登录者的个人信息，显示在页面上
             $.ajax({
                 type: "get",
-                url: "http://localhost:8089/api/v1/admin/user/info",
+                url: BigNew.user_info,
                 // 设置请求头信息，将token传过去验证。
                 // 在jquery全局做了设置
                 success: function (backdata) {
                     // console.log(backdata);
-                    if(backdata.code==200){
+                    if (backdata.code == 200) {
                         // 修改人物姓名和头像
                         $(".username").text(backdata.data.nickname);
-                        $(".user_info>img").attr("src",backdata.data.userPic);
-                        $(".user_center_link>img").attr("src",backdata.data.userPic);
+                        $(".user_info>img").attr("src", backdata.data.userPic);
+                        $(".user_center_link>img").attr("src", backdata.data.userPic);
                     }
 
                 }
             })
 
+            // 给登出按钮绑定点击事件：实现登出功能
+            $(".logout").on("click", function () {
+                if (confirm("你确定要退出吗")) {
+                    localStorage.removeItem("token");
+                    location.href = "./login.html"
+                }
+
+            })
 
 
         })
