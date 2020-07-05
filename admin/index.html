@@ -20,7 +20,7 @@
         <a href="#" class="logo"><img src="images/logo02.png" alt="logo"></a>
         <div class="user_info">
             <img src="images/2.jpg" alt="person">
-            <span>欢迎&nbsp;&nbsp;李思思</span>
+            <span>欢迎&nbsp;&nbsp;<i class="username" style="font-style: normal;">默认名字</i></span>
             <b>管理员</b>
         </div>
         <!-- 左侧导航栏 -->
@@ -54,5 +54,31 @@
 
         </div>
     </div>
+
+    <script>
+        $(function () {
+            // 进入首页就应该获取登录者的个人信息，显示在页面上
+            $.ajax({
+                type: "get",
+                url: "http://localhost:8089/api/v1/admin/user/info",
+                // 设置请求头信息，将token传过去验证。
+                // 在jquery全局做了设置
+                success: function (backdata) {
+                    // console.log(backdata);
+                    if(backdata.code==200){
+                        // 修改人物姓名和头像
+                        $(".username").text(backdata.data.nickname);
+                        $(".user_info>img").attr("src",backdata.data.userPic);
+                        $(".user_center_link>img").attr("src",backdata.data.userPic);
+                    }
+
+                }
+            })
+
+
+
+        })
+    </script>
 </body>
+
 </html>
