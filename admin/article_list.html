@@ -13,6 +13,7 @@
     <script src="./libs/jquery-1.12.4.min.js"></script>
     <!-- 引入模板引擎js文件 -->
     <script src="./libs/template-web.js"></script>
+    <script src="./libs/http.js"></script>
 </head>
 
 <body>
@@ -73,5 +74,79 @@
         </div>
     </div>
 </body>
+
+<!-- 文章类别模板引擎 -->
+<script id="category_item" type="text/html">
+    <option value="">所有分类</option>
+    {{each data v}}
+    <option value="{{v.id}}">{{v.name}}</option>
+    {{/each}}
+</script>
+<!-- 文章列表模板引擎 -->
+<script id="article_item" type="text/html">
+    {{each data v}}
+    <tr>
+        <td>{{v.title}}</td>
+        <td>{{v.author}}</td>
+        <td>{{v.category}}</td>
+        <td class="text-center">{{v.date}}</td>
+        <td class="text-center">{{v.state}}</td>
+        <td class="text-center">
+            <a href="article_edit.html" class="btn btn-default btn-xs">编辑</a>
+            <a href="javascript:void(0);" class="btn btn-danger btn-xs delete">删除</a>
+        </td>
+    </tr>
+    {{/each}}
+</script>
+
+<script>
+    $(function () {
+        // 一进到页面发送ajax请求，请求文章类别的数量
+        $.get({
+            type: "get",
+            url: BigNew.category_list,
+            success: function (backdata) {
+                if (backdata.code == 200) {
+                    // 调用模板引擎的template方法
+                    console.log(backdata);
+                    let res = template("category_item", backdata);
+                    console.log(res);
+                    $("#selCategory").html(res)
+                }
+            }
+        })
+
+        // 显示文章列表
+        
+        function showArticleList() {
+            $.get({
+                type: "get",
+                url: BigNew.article_query,
+                data: {
+                    type: $("#selCategory").val(),
+                    state: $("#selStatus").val(),
+                    page: 1,
+                    perpage: 6
+                },
+                success: function (backdata) {
+                    if (backdata.code == 200) {
+                        // 调用模板引擎的template方法
+                        let res = template("article_item", backdata.data);
+                        $("tbody").html(res)
+                    }
+                }
+            })
+        }
+        showArticleList();
+        // 点击筛选按钮发送ajax请求进行筛选
+        $("#btnSearch").on("click", function (e) {
+            e.preventDefault();
+            showArticleList();
+        })
+
+
+
+    })
+</script>
 
 </html>
