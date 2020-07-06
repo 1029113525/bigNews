@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/iconfont.css">
     <link rel="stylesheet" href="css/main.css">
     <script src="./libs/jquery-1.12.4.min.js"></script>
+    <script src="./libs/http.js"></script>
 
 </head>
 
@@ -22,41 +23,41 @@
         <div class="container-fluid common_con">
             <form class="form-horizontal article_form" id="form">
                 <div class="form-group">
-                    <label for="inputEmail1" class="col-sm-2 control-label">用户名称：</label>
+                    <label for="username" class="col-sm-2 control-label">用户名称：</label>
                     <div class="col-sm-4">
-                        <input type="text" name="username" class="form-control username" id="inputEmail1" value="李思思">
+                        <input type="text" name="username" class="form-control username" id="username" value="李思思">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="inputEmail2" class="col-sm-2 control-label">昵称：</label>
+                    <label for="nickname" class="col-sm-2 control-label">昵称：</label>
                     <div class="col-sm-4">
-                        <input type="text" name="nickname" class="form-control nickname" id="inputEmail2" value="哈哈思">
+                        <input type="text" name="nickname" class="form-control nickname" id="nickname" value="哈哈思">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="inputEmail3" class="col-sm-2 control-label">邮箱：</label>
+                    <label for="email" class="col-sm-2 control-label">邮箱：</label>
                     <div class="col-sm-4">
-                        <input type="text" name="email" class="form-control email" id="inputEmail3" value="520@163.com">
+                        <input type="text" name="email" class="form-control email" id="email" value="520@163.com">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="inputPassword3" class="col-sm-2 control-label">用户图标：</label>
                     <div class="col-sm-10">
-                        <img src="images/2.jpg" alt="" class="user_pic">
-                        <input style="display: block" name="userPic" type="file" id="exampleInputFile">
+                        <label for="userPic"><img src="images/2.jpg" alt="" class="user_pic"></label>
+                        <input style="display: none" name="userPic" type="file" id="userPic">
                         <!-- 给label标签的for属性赋值,值是input标签的id,那这样的话点击label就相当于点击了input -->
                         <br>
-                        <label for="exampleInputFile">
-                            <img src="./images/uploads_icon.jpg" style="height: 50px;" alt="">
+                        <label for="userPic">
+                            <img src="./images/uploads_icon.jpg" style="height: 50px;" alt="" id="userImg">
                         </label>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="inputEmail4" class="col-sm-2 control-label">密码：</label>
+                    <label for="password" class="col-sm-2 control-label">密码：</label>
                     <div class="col-sm-4">
-                        <input type="password" name="password" class="form-control password" id="inputEmail4"
+                        <input type="password" name="password" class="form-control password" id="password"
                             value="12345678">
                     </div>
                 </div>
@@ -69,5 +70,68 @@
         </div>
     </div>
 </body>
+<script>
+    $(function () {
+
+        // 一进到用户信息页面就发送ajax请求
+        $.ajax({
+            type: "get",
+            url: BigNew.user_detail,
+            success: function (backdata) {
+                for (let key in backdata.data) {
+                    $("." + key).val(backdata.data[key]);
+                }
+                $(".user_pic").attr("src", backdata.data.userPic)
+            }
+        })
+
+        // 图片预览
+        // 1.给选中图像的input标签设置值改变change事件
+        // 2.获取选中的这个头像
+        // 3.给这个头像文件设置一个url
+        // 4.把这个url赋值给预览用的img的src属性
+        $("#userPic").on("change", function () {
+            // console.log(this.files[0]);
+            // console.log(URL.createObjectURL(this.files[0]));
+            let url = URL.createObjectURL(this.files[0]);
+            $(".user_pic").attr("src", url)
+        })
+
+
+        // 点击修改修改个人信息
+        $(".btn-edit").on("click", function (e) {
+            // 阻止submit的默认跳转
+            e.preventDefault();
+            // 发送的是formdata数据
+            let fd = new FormData(document.getElementById("form"));
+            console.log(fd.get("userPic"));
+            // 发送ajax请求
+            $.ajax({
+                type: "post",
+                url: BigNew.user_edit,
+                data: fd,
+                //ajax2.0可以不用设置请求头，但是jq帮我们自动设置了，这样的话需要我们自己取消掉
+                contentType: false,
+                //取消帮我们格式化数据，是什么就是什么
+                processData: false,
+                success: function (backdata) {
+                    console.log(backdata);
+                    if (backdata.code == 200) {
+                        alert("修改成功")
+                        // 更新父窗口中的信息(刷新页面)
+                        parent.window.location.reload();
+                    } else {
+                        alert("修改失败")
+                    }
+                }
+            })
+
+
+        })
+
+
+
+    })
+</script>
 
 </html>
