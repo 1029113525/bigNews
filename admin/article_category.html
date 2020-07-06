@@ -32,14 +32,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    <!-- <tr>
                         <td>奇趣事</td>
                         <td>funny</td>
                         <td class="text-center">
-                            <a href="javascript:void(0)" data-toggle="modal" class=" btn btn-info btn-xs">编辑</a>
+                            <a href="javascript:void(0)" data-toggle="modal" data-target="#myModal"  class=" btn btn-info btn-xs">编辑</a>
                             <a href="javascript:void(0)" class="btn btn-danger btn-xs">删除</a>
                         </td>
-                    </tr>
+                    </tr> -->
                 </tbody>
                 <tfoot>
                     <tr>
@@ -53,6 +53,36 @@
         </div>
     </div>
 
+    <!-- bootstrap的模态框 -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModaltitle">New message</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label tx1">分类名称:</label>
+                            <input type="text" class="form-control" id="recipient-name">
+                        </div>
+                        <div class="form-group">
+                            <label for="message-text" class="control-label tx2">分类别名:</label>
+                            <input type="text" class="form-control" id="message-text"></input>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary">新增</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <!-- 准备模板 -->
     <script id="category_temp" type="text/html">
         {{each data v}}
@@ -60,7 +90,8 @@
             <td>{{v.name}}</td>
             <td>{{v.slug}}</td>
             <td class="text-center">
-                <a href="javascript:void(0)" data-id="{{v.id}}" data-toggle="modal" class=" btn btn-info btn-xs">编辑</a>
+                <a href="javascript:void(0)" data-id="{{v.id}}" data-toggle="modal" data-target="#myModal" 
+                    class=" btn btn-info btn-xs editBtn">编辑</a>
                 <a href="javascript:void(0)" data-id="{{v.id}}" class="btn btn-danger btn-xs">删除</a>
             </td>
         </tr>
@@ -74,16 +105,35 @@
                 type: "get",
                 url: BigNew.category_list,
                 success: function (backdata) {
-                    if(backdata.code==200){
+                    if (backdata.code == 200) {
                         // 调用模板引擎的template方法
-                        let res = template("category_temp",backdata)
-                        console.log(res);
+                        let res = template("category_temp", backdata)
+                        // console.log(res);
                         $("tbody").html(res);
                     }
                 }
             })
 
+            // 判断到底是新增分类弹出模态框还是编辑弹出的模态框
+            // 也可以用show.bs.modal这个事件：在模态框显示的时候触发
+            // 然后用e.relatedTarget属性进行判断点击的是哪一个按钮
+
+            // 点击新增分类弹出对应的模态框
+            $("#xinzengfenlei").on("click", function () {
+                $("#myModal .modal-title").text("新增分类");
+                $("#myModal .modal-footer button:eq(1)").text("新增");
+                $("#myModal .modal-footer button:eq(1)").removeClass("btn-success");
+            })
+
+            // 点击编辑弹出对应的模态框
+            $(".common_con tbody").on("click", ".editBtn", function () {
+                $("#myModal .modal-title").text("编辑分类");
+                $("#myModal .modal-footer button:eq(1)").text("编辑");
+                $("#myModal .modal-footer button:eq(1)").addClass("btn-success");
+            })
+
         })
     </script>
+</body>
 
 </html>
