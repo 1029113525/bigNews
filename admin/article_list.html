@@ -223,7 +223,10 @@
         })
     })
 
-
+    // 点击发表文章跳转到发表文章的iframe
+    $("#release_btn").on("click", function () {
+        parent.$("ul.level02>li:eq(1)").click();
+    })
 
     // 对下面的代码进行了封装
     /* 
