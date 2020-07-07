@@ -13,6 +13,8 @@
     <script src="./libs/jquery-1.12.4.min.js"></script>
     <!-- 引入模板引擎js文件 -->
     <script src="./libs/template-web.js"></script>
+    <script src="./libs/bootstrap/js/bootstrap.min.js"></script>
+    <script src="./libs/jquery.twbsPagination.js"></script>
     <script src="./libs/http.js"></script>
 </head>
 
@@ -69,7 +71,10 @@
                     </tr>
                 </tbody>
             </table>
+            <!--分页插件结构 -->
             <div class="row text-center">
+                <ul class="pagination" id="pagination"></ul>
+                <h3 class="showTitle" style="color: #5a5959;font-size: 30px;">没有数据！</h3>
             </div>
         </div>
     </div>
@@ -116,9 +121,124 @@
             }
         })
 
-        // 显示文章列表
-        
-        function showArticleList() {
+        /* 
+            封装ajax请求
+            1.一进到页面发送ajax请求，渲染完成   后面传入分页方法
+            2.在分页插件的onpageClick，渲染完成  后面没有反方
+            3.点击筛选按钮发送ajax请求，渲染完成 根据新的页码重绘分页结构
+         */
+
+        function showAritcleData(mypage, callback) {
+            $.get({
+                type: "get",
+                url: BigNew.article_query,
+                data: {
+                    type: $("#selCategory").val(),
+                    state: $("#selStatus").val(),
+                    page: mypage,
+                    perpage: 6
+                },
+                success: function (backdata) {
+                    // console.log(backdata);
+                    if (backdata.code == 200) {
+                        // 调用模板引擎的template方法
+                        let res = template("article_item", backdata.data);
+                        $("tbody").html(res)
+
+                        if (backdata.data.data.length != 0) {
+                            $(".showTitle").hide().siblings().show();
+                            typeof callback === "function" ? callback(backdata) : null
+                        }else{
+                            $(".showTitle").show().siblings().hide();
+                        }
+                    }
+                }
+            })
+        }
+
+        function showPages(backdata) {
+            //请求成功之后写 分页插件
+            $('#pagination').twbsPagination({
+                totalPages: backdata.data.totalPage, //总页数
+                visiblePages: 6, //最大可见页数
+                first: "首页",
+                prev: "上一页",
+                next: "下一页",
+                last: "尾页",
+                onPageClick: function (event, page) { //点击触发这个回调函数
+                    showAritcleData(page, null)
+                }
+            })
+        }
+        // 调用显示文章显示的方法，并传入回调函数执行分页方法
+        showAritcleData(1, showPages);
+        // 点击筛选按钮发送ajax请求进行筛选
+        $("#btnSearch").on("click", function (e) {
+            e.preventDefault();
+            showAritcleData(1, function (backdata) {
+                // 点击筛选之后由于改变了筛选条件，我们需要根据新的数据重新生成分页数
+                $("#pagination").twbsPagination("changeTotalPages", backdata.data.totalPage, 1)
+            })
+        })
+
+    })
+
+    // 对下面的代码进行了封装
+    /* 
+    $.get({
+            type: "get",
+            url: BigNew.article_query,
+            data: {
+                type: $("#selCategory").val(),
+                state: $("#selStatus").val(),
+                page: 1,
+                perpage: 6
+            },
+            success: function (backdata) {
+                // console.log(backdata);
+                if (backdata.code == 200) {
+                    // 调用模板引擎的template方法
+                    let res = template("article_item", backdata.data);
+                    $("tbody").html(res)
+
+
+                    //请求成功之后写 分页插件
+                    $('#pagination').twbsPagination({
+                        totalPages: backdata.data.totalPage, //总页数
+                        visiblePages: 6, //最大可见页数
+                        first: "首页",
+                        prev: "上一页",
+                        next: "下一页",
+                        last: "尾页",
+                        onPageClick: function (event, page) { //点击触发这个回调函数
+                            // console.log(page); //当前点击的页码数
+                            $.get({
+                                type: "get",
+                                url: BigNew.article_query,
+                                data: {
+                                    type: $("#selCategory").val(),
+                                    state: $("#selStatus").val(),
+                                    page: page, //将点击的页码穿过来再次发送ajax请求
+                                    perpage: 6
+                                },
+                                success: function (backdata) {
+                                    if (backdata.code == 200) {
+                                        // 调用模板引擎的template方法
+                                        let res = template(
+                                            "article_item", backdata
+                                            .data);
+                                        $("tbody").html(res)
+                                    }
+                                }
+                            })
+                        }
+                    })
+                }
+            }
+        })
+        // 点击筛选按钮发送ajax请求进行筛选
+        $("#btnSearch").on("click", function (e) {
+            e.preventDefault();
             $.get({
                 type: "get",
                 url: BigNew.article_query,
@@ -129,24 +249,25 @@
                     perpage: 6
                 },
                 success: function (backdata) {
+                    console.log(backdata);
                     if (backdata.code == 200) {
                         // 调用模板引擎的template方法
                         let res = template("article_item", backdata.data);
                         $("tbody").html(res)
+
+                        // 点击筛选之后由于改变了筛选条件，我们需要根据新的数据重新生成分页数
+                        $("#pagination").twbsPagination(
+                            "changeTotalPages",
+                            backdata.data.totalPage,
+                            1)
+
                     }
                 }
             })
-        }
-        showArticleList();
-        // 点击筛选按钮发送ajax请求进行筛选
-        $("#btnSearch").on("click", function (e) {
-            e.preventDefault();
-            showArticleList();
-        })
 
-
-
-    })
+        }) 
+    
+     */
 </script>
 
 </html>
