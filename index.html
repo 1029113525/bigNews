@@ -289,6 +289,12 @@
         {{/each}}
     </script>
 
+    <!-- 焦点关注模板 -->
+    <script id="attention_temp" type="text/html">
+        {{each data v}}
+        <li><a href="./article.html?id={{v.id}}">{{v.intro}}</a></li>
+        {{/each}}
+    </script>
 
     <script>
         $(function () {
@@ -338,6 +344,18 @@
                     let res = template("comment_temp", backdata);
                     // console.log(res);
                     $(".comment_list").html(res)
+                }
+            })
+
+            // 焦点关注
+            $.ajax({
+                type: "get",
+                url: "http://localhost:8089/api/v1/index/attention",
+                success: function (backdata) {
+                    // console.log(backdata);
+                    let res = template("attention_temp", backdata);
+                    // console.log(res);
+                    $(".guanzhu_list").html(res)
                 }
             })
 
