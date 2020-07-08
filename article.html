@@ -215,7 +215,18 @@
         ({{data.read}})&nbsp;&nbsp;&nbsp;评论: ({{data.comments}})
     </script>
 
-
+    <!-- 准备评论模板 -->
+    <script id="comments_item" type="text/html">
+        {{each data v}}
+        <div class="comment_detail_list">
+            <div class="person_pic fl">{{v.author.substring(0,1)}}</div>
+            <div class="name_time fl"><b>{{v.author}}</b><span>{{v.date}} {{v.time}}</span></div>
+            <div class="comment_text fl">
+                {{v.content}}
+            </div>
+        </div>
+        {{/each}}
+    </script>
 
     <script>
         $(function () {
@@ -233,21 +244,21 @@
                     id
                 },
                 success: function (backdata) {
-                    console.log(backdata);
+                    // console.log(backdata);
 
                     $(".breadcrumb").children("a:eq(1)").text(backdata.data.category);
                     $(".article_title").text(backdata.data.title);
                     $(".article_con").html(backdata.data.content);
                     $(".article_info").html(template("article_info", backdata))
 
-                    if (backdata.data.prev==null) {
+                    if (backdata.data.prev == null) {
                         $(".article_links a:eq(0)").text("无");
                     } else {
                         $(".article_links a:eq(0)").text(backdata.data.prev.title);
                         $(".article_links a:eq(0)").attr("href", "./article.html?id=" + backdata
                             .data.prev.id);
                     }
-                    if (backdata.data.next==null) {
+                    if (backdata.data.next == null) {
                         $(".article_links a:eq(1)").text("无");
                     } else {
                         $(".article_links a:eq(1)").text(backdata.data.next.title);
@@ -259,7 +270,19 @@
                 }
             })
 
-
+            // 展示该文章下的评论
+            $.ajax({
+                type: "get",
+                url: "http://localhost:8089/api/v1/index/get_comment",
+                data: {
+                    articleId: id
+                },
+                success: function (backdata) {
+                    $(".comment_count").text(backdata.data.length+"条评论");
+                    let res = template("comments_item",backdata);
+                    $(".comment_list_con").html(res);
+                }
+            })
 
 
 
