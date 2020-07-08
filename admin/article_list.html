@@ -187,7 +187,7 @@
         // 点击筛选按钮发送ajax请求进行筛选
         $("#btnSearch").on("click", function (e) {
             e.preventDefault();
-            // 把当前页改为1
+            // 点击筛选需要把当前页改为1
             currentPage = 1;
             showAritcleData(1, function (backdata) {
                 // 点击筛选之后由于改变了筛选条件，我们需要根据新的数据重新生成分页数
