@@ -278,13 +278,40 @@
                     articleId: id
                 },
                 success: function (backdata) {
-                    $(".comment_count").text(backdata.data.length+"条评论");
-                    let res = template("comments_item",backdata);
+                    $(".comment_count").text(backdata.data.length + "条评论");
+                    let res = template("comments_item", backdata);
                     $(".comment_list_con").html(res);
                 }
             })
 
-
+            // 点击评论然后发表评论
+            $(".comment_sub").on("click", function (e) {
+                e.preventDefault();
+                let commentname = $(".comment_name").val().trim();
+                let commentcon = $(".comment_input").val().trim();
+                if (commentname == "" || commentcon == "") {
+                    alert("用户名和内容不允许为空");
+                    return;
+                }
+                console.log(commentname,commentcon,id);
+                // 发送ajax请求
+                $.ajax({
+                    type: "post",
+                    url: "http://localhost:8089/api/v1/index/post_comment",
+                    data: {
+                        author: commentname,
+                        content: commentcon,
+                        articleId: id
+                    },
+                    success: function (backdata) {
+                        if (backdata.code == 201) {
+                            alert("发表成功，等待管理员审核")
+                            $(".comment_name").val("");
+                            $(".comment_input").val("");
+                        }
+                    }
+                })
+            })
 
 
         })
