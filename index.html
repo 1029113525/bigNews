@@ -56,7 +56,7 @@
     <div class="main_con clearfix">
         <div class="left_con">
             <ul class="focus_list">
-                <li class="first">
+                <!-- <li class="first">
                     <a href="#"><img src="images/pic01.jpg" alt=""></a>
                     <p>图片说明</p>
                 </li>
@@ -75,7 +75,7 @@
                 <li>
                     <a href="#"><img src="images/pic06.jpg" alt=""></a>
                     <p>图片说明</p>
-                </li>
+                </li> -->
             </ul>
 
             <div class="common_title">
@@ -245,6 +245,20 @@
         </div>
         {{/each}}
     </script>
+    <!--热点图模板 -->
+    <script id="hotpic_temp" type="text/html">
+        {{each data v}}
+            {{if $index==0}}
+            <!-- 如果索引为0则生成带有first的li标签 -->
+            <li class="first">
+                {{else}}<!-- 否则生成没有first的li标签 -->
+            <li>
+                {{/if}}
+                <a href="./article.html?id={{v.id}}"><img src="{{v.cover}}" alt=""></a>
+                <p>{{v.title}}</p>
+            </li>
+        {{/each}}
+    </script>
     <script>
         $(function () {
 
@@ -254,12 +268,23 @@
                 url: "http://localhost:8089/api/v1/index/latest",
                 success: function (backdata) {
                     // 调用模板引擎方法
-                    let res = template("latest_temp",backdata);
-                    console.log(res);
+                    let res = template("latest_temp", backdata);
+                    // console.log(res);
                     $(".common_news").html(res)
                 }
             })
 
+            // 热点图新闻
+            $.ajax({
+                type: "get",
+                url: "http://localhost:8089/api/v1/index/hotpic",
+                success: function (backdata) {
+                    // 调用模板引擎方法
+                    let res = template("hotpic_temp", backdata);
+                    // console.log(res);
+                    $(".focus_list").html(res)
+                }
+            })
 
 
         })
