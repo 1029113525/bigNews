@@ -229,12 +229,12 @@
     <script src="./js/jquery-1.12.4.min.js"></script>
     <script src="./admin/libs/http.js"></script>
 
-    <!-- 文章咨询模板 -->
+    <!-- 文章资讯模板 -->
     <script id="latest_temp" type="text/html">
         {{each data v}}
         <div class="common_news_list">
-            <a href="#" class="list_pic"><img src="{{v.cover}}" alt=""></a>
-            <h4><a href="#">{{v.title}}</a></h4>
+            <a href="./article.html?id={{v.id}}" class="list_pic"><img src="{{v.cover}}" alt=""></a>
+            <h4><a href="./article.html?id={{v.id}}">{{v.title}}</a></h4>
             <p>{{@ v.intro}}</p>
             <div class="new_info">
                 <span>标签：{{v.category}}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<i
