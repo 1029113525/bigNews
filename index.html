@@ -376,13 +376,38 @@
                     if (backdata.code == 200) {
                         // 设置竖着的文章类别列表
                         let res = template("category_temp", backdata);
-                        $(".level_two").html("<li class='up'></li>"+res)//竖着的需要拼接一个up li标签
+                        $(".level_two").html("<li class='up'></li>" + res) //竖着的需要拼接一个up li标签
                         // 设置横着的文章类别列表
                         $(".left_menu").html(res)
 
                     }
                 }
             })
+
+            // 文章搜索
+            $(".search_txt").on("focus", function () {
+                $(window).on("keypress", function (e) {
+                    if (e.keyCode == 13) {
+                        $(".search_btn").trigger("click");
+                    }
+                })
+            })
+            $(".search_txt").on("blur", function () {
+                $(window).off("keypress")
+            })
+
+            $(".search_btn").on("click", function () {
+                // 获取输入的关键词
+                let searchTxt = $(".search_txt").val().trim();
+                // 非空判断
+                if(searchTxt == ""){
+                    alert("搜索的内容不能为空");
+                    return;
+                }
+                // 跳转到list.html页面，并把关键词传过去
+                location.href = "./list.html?search="+searchTxt;
+            })
+            
 
         })
     </script>
