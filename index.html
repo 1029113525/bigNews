@@ -296,6 +296,15 @@
         {{/each}}
     </script>
 
+    <!-- 文章类别模板 -->
+    <script id="category_temp" type="text/html">
+        {{each data v}}
+        <li>
+            <a href="./list.html?categoryId={{v.id}}">{{v.name}}</a>
+        </li>
+        {{/each}}
+    </script>
+
     <script>
         $(function () {
 
@@ -356,6 +365,22 @@
                     let res = template("attention_temp", backdata);
                     // console.log(res);
                     $(".guanzhu_list").html(res)
+                }
+            })
+
+            // 文章类别
+            $.ajax({
+                type: "get",
+                url: "http://localhost:8089/api/v1/index/category",
+                success: function (backdata) {
+                    if (backdata.code == 200) {
+                        // 设置竖着的文章类别列表
+                        let res = template("category_temp", backdata);
+                        $(".level_two").html("<li class='up'></li>"+res)//竖着的需要拼接一个up li标签
+                        // 设置横着的文章类别列表
+                        $(".left_menu").html(res)
+
+                    }
                 }
             })
 
