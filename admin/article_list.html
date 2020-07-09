@@ -157,6 +157,9 @@
                             .length == 0) {
                             currentPage -= 1;
                             // 重新绘制分页结构
+                            // 第一个参数是事件的名字
+                            // 第二个参数是改变后的总的页码
+                            // 第三个参数是当前要显示的页码
                             $("#pagination").twbsPagination("changeTotalPages", backdata.data
                                 .totalPage, currentPage)
                         }
