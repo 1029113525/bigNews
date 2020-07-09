@@ -211,14 +211,14 @@
             $("tbody").html(res);
 
             // 分页数据判断
-            if (backdata.data.data.length != 0) {
+            if (backdata.data.data.length != 0) { //如果有数据
               $(".showTitle").hide().siblings().show();
               typeof callback === "function" ? callback(backdata) : null
             } else if (backdata.data.data
-              .length == 0 && currentPage == 1) {
+              .length == 0 && currentPage == 1) { //如果没有数据并且是第一页
               $(".showTitle").show().siblings().hide();
             } else if (backdata.data.totalPage == currentPage - 1 && backdata.data.data
-              .length == 0) {
+              .length == 0) { //如果点击删除数据当前页(800页)的数据都没了，此时总页数为799页当前页还为800页，因此重绘页面
               currentPage -= 1;
               // 重新绘制分页结构
               $("#pagination").twbsPagination("changeTotalPages", backdata.data
@@ -248,6 +248,8 @@
       showCommtens(currentPage, function (backdata) {
         showPages(backdata)
       });
+
+
       // 二、通过
       $("tbody").on("click", ".btn-ok", function () {
         let id = $(this).data("id");
